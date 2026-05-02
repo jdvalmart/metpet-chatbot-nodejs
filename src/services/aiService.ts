@@ -1,5 +1,9 @@
 import ollama from 'ollama';
 import config from '../config/env.js';
+import logger from './logger.js';
+
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = 1000;
 
 class AIService {
   private model: string;
@@ -17,20 +21,42 @@ class AIService {
       return null;
     }
 
-    try {
-      const response = await ollama.chat({
-        model: this.model,
-        messages: [
-          { role: 'system', content: this.systemPrompt },
-          { role: 'user', content: userMessage },
-        ],
-      });
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const startTime = Date.now();
+        const response = await ollama.chat({
+          model: this.model,
+          messages: [
+            { role: 'system', content: this.systemPrompt },
+            { role: 'user', content: userMessage },
+          ],
+        });
 
-      return response.message?.content || null;
-    } catch (error) {
-      console.error('AI generation error:', error);
-      return null;
+        logger.info('AI response generated', {
+          model: this.model,
+          duration_ms: Date.now() - startTime,
+          message_length: userMessage.length,
+        });
+
+        return response.message?.content || null;
+      } catch (error) {
+        if (attempt < MAX_RETRIES) {
+          logger.warn(`AI retry ${attempt + 1}/${MAX_RETRIES}`, {
+            model: this.model,
+            error: (error as Error).message,
+          });
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+        } else {
+          logger.error('AI generation failed after retries', {
+            model: this.model,
+            error: (error as Error).message,
+          });
+          return null;
+        }
+      }
     }
+
+    return null;
   }
 
   isEnabled(): boolean {

@@ -2,6 +2,7 @@ import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import logger from './logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dbPath = path.resolve(__dirname, '../../data/chatbot.db');
@@ -27,7 +28,10 @@ class DatabaseService {
     }
 
     this.db = new Database(dbPath);
+    this.db.pragma('journal_mode = WAL');
+    this.db.pragma('foreign_keys = ON');
     this.initializeTables();
+    logger.info('Database initialized', { path: dbPath });
   }
 
   private initializeTables(): void {

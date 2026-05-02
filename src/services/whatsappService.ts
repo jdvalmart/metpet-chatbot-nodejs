@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import config from '../config/env.js';
+import logger from './logger.js';
 
 interface MessagePayload {
   messaging_product: string;
@@ -36,7 +37,12 @@ class WhatsAppService {
       });
     } catch (error) {
       const err = error as AxiosError;
-      console.error('Error sending message:', err.message);
+      logger.error('Failed to send WhatsApp message', {
+        to,
+        messageId,
+        error: err.message,
+        status: err.response?.status,
+      });
     }
   }
 
@@ -58,7 +64,11 @@ class WhatsAppService {
       });
     } catch (error) {
       const err = error as AxiosError;
-      console.error('Error marking message as read:', err.message);
+      logger.error('Failed to mark message as read', {
+        messageId,
+        error: err.message,
+        status: err.response?.status,
+      });
     }
   }
 }

@@ -1,163 +1,163 @@
 # MetPet Chatbot
 
-WhatsApp Cloud API chatbot with AI-powered responses for pet foundation ValCer.
+Chatbot de WhatsApp con respuestas con IA para la fundación de mascotas ValCer.
 
-## Features
+## Características
 
-- **WhatsApp Integration**: Receive and respond to messages via WhatsApp Cloud API
-- **AI Responses**: Intelligent responses using Ollama (local LLMs like llama3.2)
-- **Conversation Persistence**: SQLite database stores all conversations
-- **REST API**: Endpoints to query conversation history and statistics
-- **TypeScript**: Full type safety with strict mode
-- **Testing**: 22 unit tests with Vitest
-- **Logging**: Structured logging with Winston
-- **Docker**: Containerized deployment ready
-- **Security**: API key authentication for conversation endpoints
+- **Integración con WhatsApp**: Recibir y responder mensajes via WhatsApp Cloud API
+- **Respuestas con IA**: Respuestas inteligentes usando Ollama (modelos locales como llama3.2)
+- **Persistencia de conversaciones**: Base de datos SQLite almacena todas las conversaciones
+- **API REST**: Endpoints para consultar historial de conversaciones y estadísticas
+- **TypeScript**: Seguridad total de tipos con modo estricto
+- **Testing**: 22 tests unitarios con Vitest
+- **Logging**: Logging estructurado con Winston
+- **Docker**:listo para despliegue en contenedores
+- **Seguridad**: Autenticación con API key para endpoints de conversaciones
 
 ## Tech Stack
 
 - Node.js 18+
 - Express.js
-- TypeScript (strict mode)
-- Ollama (AI)
+- TypeScript (modo estricto)
+- Ollama (IA)
 - SQLite (better-sqlite3)
 - Vitest (testing)
 - Winston (logging)
 - Docker
 
-## Quick Start
+## Inicio Rápido
 
-### Prerequisites
+### Requisitos Previos
 
 - Node.js 18+
-- WhatsApp Cloud API credentials
-- (Optional) Ollama for AI responses
+- Credenciales de WhatsApp Cloud API
+- (Opcional) Ollama para respuestas con IA
 
-### Installation
+### Instalación
 
 ```bash
-# Install dependencies
+# Instalar dependencias
 npm install
 
-# Copy environment file
+# Copiar archivo de entorno
 cp .env_example .env
 ```
 
-### Configuration
+### Configuración
 
-Edit `.env` with your credentials:
+Editar `.env` con tus credenciales:
 
 ```env
 # WhatsApp API
-WEBHOOK_VERIFY_TOKEN=your_webhook_verify_token
-API_TOKEN=your_facebook_access_token
-BUSINESS_PHONE=your_business_phone_number
+WEBHOOK_VERIFY_TOKEN=tu_token_de_verificacion
+API_TOKEN=tu_token_de_facebook
+BUSINESS_PHONE=tu_numero_de_telefono
 API_VERSION=v18.0
 
-# Server
+# Servidor
 PORT=3000
 
-# AI (Optional - set to true to enable)
+# IA (Opcional - establecer en true para habilitar)
 AI_ENABLED=false
 AI_MODEL=llama3.2
-AI_SYSTEM_PROMPT=You are a helpful assistant for a pet foundation called ValCer. Keep responses concise and friendly.
+AI_SYSTEM_PROMPT=Eres un asistente útil para una fundación de mascotas llamada ValCer. Mantén respuestas concisas y amigables.
 
-# Security
-CONVERSATIONS_API_KEY=your-secret-api-key
+# Seguridad
+CONVERSATIONS_API_KEY=tu-api-key-secreta
 ```
 
-### Running
+### Ejecución
 
 ```bash
-# Development
+# Desarrollo
 npm start
 
-# Run tests
+# Ejecutar tests
 npm test
 
-# Build TypeScript
+# Compilar TypeScript
 npm run build
 ```
 
-### Running with Docker
+### Ejecutar con Docker
 
 ```bash
-# Build and run
+# Construir y ejecutar
 docker-compose up -d
 
-# View logs
+# Ver logs
 docker-compose logs -f
 ```
 
-## API Endpoints
+## Endpoints de API
 
 ### Webhook
 
-- `GET /webhook` — WhatsApp webhook verification
-- `POST /webhook` — Receive incoming messages
+- `GET /webhook` — Verificación de webhook de WhatsApp
+- `POST /webhook` — Recibir mensajes entrantes
 
-### Conversations (requires API key)
+### Conversaciones (requiere API key)
 
 ```bash
-# Add header: x-api-key: your-secret-api-key
+# Agregar header: x-api-key: tu-api-key-secreta
 
-# Get all conversations
+# Obtener todas las conversaciones
 GET /conversations
 
-# Get conversations by phone
+# Obtener conversaciones por teléfono
 GET /conversations/:phone
 
-# Get statistics
+# Obtener estadísticas
 GET /conversations/stats
 ```
 
-Example:
+Ejemplo:
 
 ```bash
-curl -H "x-api-key: your-secret-api-key" \
+curl -H "x-api-key: tu-api-key-secreta" \
   http://localhost:3000/conversations/stats
 ```
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 src/
-├── app.ts                    # Express server
-├── config/env.ts            # Environment configuration
+├── app.ts                    # Servidor Express
+├── config/env.ts            # Configuración de entorno
 ├── controllers/
 │   ├── conversationController.ts
 │   └── webhookController.ts
 ├── middleware/
-│   ├── auth.ts              # API key authentication
-│   └── errorHandler.ts      # Error handling
+│   ├── auth.ts              # Autenticación con API key
+│   └── errorHandler.ts      # Manejo de errores
 ├── routes/
 │   ├── conversationRoutes.ts
 │   └── webhookRoutes.ts
 └── services/
-    ├── aiService.ts         # Ollama AI integration
-    ├── database.ts          # SQLite persistence
-    ├── logger.ts            # Winston logging
-    ├── messageHandler.ts    # Message processing
-    └── whatsappService.ts   # WhatsApp API client
+    ├── aiService.ts         # Integración con Ollama
+    ├── database.ts          # Persistencia SQLite
+    ├── logger.ts            # Logging con Winston
+    ├── messageHandler.ts    # Procesamiento de mensajes
+    └── whatsappService.ts   # Cliente de WhatsApp API
 ```
 
 ## Testing
 
 ```bash
-# Run tests
+# Ejecutar tests
 npm test
 
-# Run with coverage
+# Ejecutar con cobertura
 npm run test:coverage
 ```
 
-## AI Setup (Optional)
+## Configuración de IA (Opcional)
 
-1. Install Ollama: https://ollama.com
-2. Pull a model: `ollama pull llama3.2`
-3. Start Ollama: `ollama serve`
-4. Set `AI_ENABLED=true` in `.env`
+1. Instalar Ollama: https://ollama.com
+2. Descargar un modelo: `ollama pull llama3.2`
+3. Iniciar Ollama: `ollama serve`
+4. Establecer `AI_ENABLED=true` en `.env`
 
-## License
+## Licencia
 
 ISC

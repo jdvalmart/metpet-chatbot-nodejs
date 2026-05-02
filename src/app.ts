@@ -1,13 +1,13 @@
-import express from 'express';
+import express, { Express, Request, Response } from 'express';
 import config from './config/env.js';
 import webhookRoutes from './routes/webhookRoutes.js';
 
-const app = express();
+const app: Express = express();
 app.use(express.json());
 
 app.use('/', webhookRoutes);
 
-app.get('/', (req, res) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send(`<pre>Nothing to see here.
 Checkout README.md to start.</pre>`);
 });
@@ -15,3 +15,5 @@ Checkout README.md to start.</pre>`);
 app.listen(config.PORT, () => {
   console.log(`Server is listening on port:  ${config.PORT}`);
 });
+
+export default app;

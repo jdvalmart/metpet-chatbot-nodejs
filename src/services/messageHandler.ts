@@ -1,4 +1,5 @@
 import whatsappService from './whatsappService.js';
+import aiService from './aiService.js';
 
 interface WhatsAppMessage {
   type: string;
@@ -26,11 +27,23 @@ class MessageHandler {
       if (this.isGreeting(incomingMessage)) {
         await this.sendWelcomeMessage(message.from, message.id, senderInfo);
       } else {
-        const response = `Echo: ${message.text.body}`;
-        await whatsappService.sendMessage(message.from, response, message.id);
+        await this.processUserMessage(message);
       }
       await whatsappService.markAsRead(message.id);
     }
+  }
+
+  private async processUserMessage(message: WhatsAppMessage): Promise<void> {
+    let response: string;
+
+    if (aiService.isEnabled()) {
+      const aiResponse = await aiService.generateResponse(message.text?.body || '');
+      response = aiResponse || `Echo: ${message.text?.body}`;
+    } else {
+      response = `Echo: ${message.text?.body}`;
+    }
+
+    await whatsappService.sendMessage(message.from, response, message.id);
   }
 
   isGreeting(message: string): boolean {

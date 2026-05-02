@@ -8,6 +8,9 @@ export interface Config {
   BUSINESS_PHONE: string | undefined;
   API_VERSION: string | undefined;
   PORT: number;
+  AI_ENABLED: boolean;
+  AI_MODEL: string;
+  AI_SYSTEM_PROMPT: string;
 }
 
 const config: Config = {
@@ -16,6 +19,9 @@ const config: Config = {
   BUSINESS_PHONE: process.env.BUSINESS_PHONE,
   API_VERSION: process.env.API_VERSION,
   PORT: parseInt(process.env.PORT || '3000', 10),
+  AI_ENABLED: process.env.AI_ENABLED === 'true',
+  AI_MODEL: process.env.AI_MODEL || 'llama3.2',
+  AI_SYSTEM_PROMPT: process.env.AI_SYSTEM_PROMPT || 'You are a helpful assistant for a pet foundation called ValCer. Keep responses concise and friendly.',
 };
 
 export default config;

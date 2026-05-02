@@ -1,0 +1,25 @@
+services:
+  chatbot:
+    build: .
+    container_name: metpet-chatbot
+    ports:
+      - "3000:3000"
+    environment:
+      - WEBHOOK_VERIFY_TOKEN=${WEBHOOK_VERIFY_TOKEN}
+      - API_TOKEN=${API_TOKEN}
+      - BUSINESS_PHONE=${BUSINESS_PHONE}
+      - API_VERSION=${API_VERSION}
+      - PORT=3000
+      - AI_ENABLED=${AI_ENABLED:-false}
+      - AI_MODEL=${AI_MODEL:-llama3.2}
+      - AI_SYSTEM_PROMPT=${AI_SYSTEM_PROMPT:-You are a helpful assistant for a pet foundation called ValCer.}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - chatbot-data:/app/data
+    restart: unless-stopped
+
+  # Ollama runs on host, not container - chat service connects to host
+  # To enable, start ollama on host and set AI_ENABLED=true
+
+volumes:
+  chatbot-data:

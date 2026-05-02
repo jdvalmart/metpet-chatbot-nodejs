@@ -1,0 +1,14 @@
+node_modules/
+dist/
+data/
+logs/
+.git/
+.gitignore
+.env
+.env_example
+tests/
+vitest.config.js
+docker-compose.yml
+Dockerfile
+.dockerignore
+README.md

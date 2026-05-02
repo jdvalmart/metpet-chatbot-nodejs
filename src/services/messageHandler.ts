@@ -22,23 +22,24 @@ const GREETINGS = ['hi', 'hello', 'hola', 'buenos dias', 'buenas tardes', 'buena
 
 class MessageHandler {
   async handleIncomingMessage(message: WhatsAppMessage, senderInfo: SenderInfo): Promise<void> {
-    if (message?.type === 'text' && message.text) {
+    if (message?.type === 'text' && message.text?.body) {
       const incomingMessage = message.text.body.toLowerCase().trim();
       const userName = this.getSenderName(senderInfo);
 
       if (this.isGreeting(incomingMessage)) {
         await this.sendWelcomeMessage(message.from, message.id, senderInfo);
-        // Save welcome message
-        databaseService.saveConversation(
+        // Save welcome message - await to prevent silent failures
+        await databaseService.saveConversation(
           message.from,
           userName,
           incomingMessage,
-          `Hola ${this.getFirstName(userName)} Bienvenido a su fundación ValCer.`,
+          `Hola ${this.getFirstName(userName) || 'Usuario'} Bienvenido a su fundación ValCer.`,
           false
         );
       } else {
         await this.processUserMessage(message, senderInfo);
       }
+      // Await markAsRead to ensure it completes before returning
       await whatsappService.markAsRead(message.id);
     }
   }
@@ -56,8 +57,8 @@ class MessageHandler {
       response = `Echo: ${userMessage}`;
     }
 
-    // Save to database
-    databaseService.saveConversation(
+    // Save to database - await to prevent silent failures
+    await databaseService.saveConversation(
       message.from,
       this.getSenderName(senderInfo),
       userMessage,
@@ -68,7 +69,7 @@ class MessageHandler {
     await whatsappService.sendMessage(message.from, response, message.id);
   }
 
-  isGreeting(message: string): boolean {
+  private isGreeting(message: string): boolean {
     return GREETINGS.includes(message);
   }
 
@@ -77,7 +78,8 @@ class MessageHandler {
   }
 
   getFirstName(name: string): string {
-    return name.split(' ')[0];
+    const first = name.split(' ')[0];
+    return first || 'Usuario';
   }
 
   async sendWelcomeMessage(to: string, messageId: string, senderInfo: SenderInfo): Promise<void> {

@@ -11,6 +11,7 @@ export interface Config {
   AI_ENABLED: boolean;
   AI_MODEL: string;
   AI_SYSTEM_PROMPT: string;
+  CONVERSATIONS_API_KEY: string | undefined;
 }
 
 const config: Config = {
@@ -22,6 +23,7 @@ const config: Config = {
   AI_ENABLED: process.env.AI_ENABLED === 'true',
   AI_MODEL: process.env.AI_MODEL || 'llama3.2',
   AI_SYSTEM_PROMPT: process.env.AI_SYSTEM_PROMPT || 'You are a helpful assistant for a pet foundation called ValCer. Keep responses concise and friendly.',
+  CONVERSATIONS_API_KEY: process.env.CONVERSATIONS_API_KEY,
 };
 
 export default config;

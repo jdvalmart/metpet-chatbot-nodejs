@@ -4,9 +4,11 @@ import webhookRoutes from './routes/webhookRoutes.js';
 import conversationRoutes from './routes/conversationRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import logger from './services/logger.js';
+import databaseService from './services/database.js';
 
 const app: Express = express();
-app.use(express.json());
+// Limit JSON body to 100KB to prevent DoS attacks
+app.use(express.json({ limit: '100kb' }));
 
 app.use('/', webhookRoutes);
 app.use('/conversations', conversationRoutes);
@@ -25,20 +27,17 @@ const server = app.listen(config.PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received. Shutting down...');
+const shutdown = () => {
+  logger.info('Shutting down...');
   server.close(() => {
+    logger.info('Closing database connection...');
+    databaseService.close();
     logger.info('Server closed');
     process.exit(0);
   });
-});
+};
 
-process.on('SIGINT', () => {
-  logger.info('SIGINT received. Shutting down...');
-  server.close(() => {
-    logger.info('Server closed');
-    process.exit(0);
-  });
-});
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
 
 export default app;
